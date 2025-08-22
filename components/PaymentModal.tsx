@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
-import Input from './ui/Input';
+import NumberInput from './ui/NumberInput';
 import { useTheme } from '../context/ThemeContext';
 
 interface PaymentModalProps {
@@ -42,13 +42,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onConfirm,
                 </div>
                 <div>
                     <label htmlFor="paymentAmount" className="block text-sm font-medium text-foreground/80 mb-1">Payment Amount</label>
-                    <Input
+                    <NumberInput
                         id="paymentAmount"
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                        value={amount === '' ? 0 : Number(amount)}
+                        onChange={setAmount}
                         placeholder="Enter amount to pay"
                         autoFocus
+                        min={0}
+                        max={remainingAmount}
                     />
                      {isInvalid && amount !== '' && (
                         <p className="text-sm text-red-500 mt-1">

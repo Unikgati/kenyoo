@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Product } from '../types';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
-import Input from './ui/Input';
+import NumberInput from './ui/NumberInput';
 import { cn } from '../lib/utils';
 import { useTheme } from '../context/ThemeContext';
 
@@ -23,7 +23,8 @@ const SaleConfirmationModal: React.FC<SaleConfirmationModalProps> = ({ isOpen, o
         return Object.entries(cart).reduce((sum, [productId, quantity]) => {
             const product = products.find(p => p.id === productId);
             if (!product) return sum;
-            return sum + (product.price * quantity);
+            const price = +(product.price as number);
+            return sum + (price * (quantity as number));
         }, 0);
     }, [cart, products]);
     
@@ -72,7 +73,9 @@ const SaleConfirmationModal: React.FC<SaleConfirmationModalProps> = ({ isOpen, o
                             return (
                                 <div key={productId} className="flex justify-between items-center text-sm">
                                     <span className="text-foreground/80">{product.name} &times;{quantity}</span>
-                                    <span className="font-medium text-secondary-foreground">{formatCurrency(product.price * quantity)}</span>
+                                    <span className="font-medium text-secondary-foreground">
+                                        {formatCurrency(+(product.price as number) * (quantity as number))}
+                                    </span>
                                 </div>
                             );
                         })}
@@ -103,14 +106,13 @@ const SaleConfirmationModal: React.FC<SaleConfirmationModalProps> = ({ isOpen, o
                     <div className="space-y-4">
                          <div>
                             <label htmlFor="cashReceived" className="block text-sm font-medium text-foreground/80 mb-1">Cash Received</label>
-                            <Input
+                            <NumberInput
                                 id="cashReceived"
                                 name="cashReceived"
-                                type="number"
-                                placeholder={`Enter amount (e.g., ${Math.ceil(total)})`}
-                                value={cashReceived}
-                                onChange={handleCashChange}
-                                step="1000"
+                                placeholder={`${Math.ceil(total)}`}
+                                value={cashReceived === '' ? 0 : Number(cashReceived)}
+                                onChange={(value) => setCashReceived(value)}
+                                min={0}
                             />
                             {cashReceived !== '' && cashReceived < total && (
                                 <p className="text-sm text-red-500 mt-1">Cash received is less than the total amount.</p>

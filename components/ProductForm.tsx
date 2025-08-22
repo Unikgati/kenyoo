@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
 import { useData } from '../context/DataContext';
 import Input from './ui/Input';
+import NumberInput from './ui/NumberInput';
 import Button from './ui/Button';
 import Select from './ui/Select';
 
@@ -28,9 +29,44 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave }) => {
     }
   }, [product]);
 
+  // Format number with thousand separator
+  const formatNumber = (value: string): string => {
+    // Remove existing non-digit characters except decimal point
+    const cleanValue = value.replace(/[^\d.]/g, '');
+    
+    // Split the number into integer and decimal parts
+    const [integer, decimal] = cleanValue.split('.');
+    
+    // Format integer part with thousand separator
+    const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    // Return formatted number with decimal if exists
+    return decimal !== undefined ? `${formattedInteger}.${decimal}` : formattedInteger;
+  };
+
+  // Parse formatted number back to raw number
+  const parseFormattedNumber = (value: string): number => {
+    // Remove thousand separators and convert to number
+    return parseFloat(value.replace(/\./g, '')) || 0;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: name === 'price' || name === 'commission' ? parseFloat(value) || 0 : value }));
+    
+    if (name === 'price' || name === 'commission') {
+      // For price and commission, handle formatting
+      const formattedValue = formatNumber(value);
+      e.target.value = formattedValue;
+      
+      // Store the actual number value in state
+      setFormData(prev => ({
+        ...prev,
+        [name]: parseFormattedNumber(formattedValue)
+      }));
+    } else {
+      // For other fields, handle normally
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,11 +88,27 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave }) => {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label htmlFor="price" className="block text-sm font-medium text-foreground/80 mb-1">Price</label>
-          <Input id="price" name="price" type="number" step="0.01" value={formData.price} onChange={handleChange} required />
+          <NumberInput 
+            id="price" 
+            name="price" 
+            value={Number(formData.price)} 
+            onChange={(value) => setFormData(prev => ({ ...prev, price: value }))}
+            placeholder="0"
+            required
+            min={0}
+          />
         </div>
         <div>
           <label htmlFor="commission" className="block text-sm font-medium text-foreground/80 mb-1">Commission</label>
-          <Input id="commission" name="commission" type="number" step="0.01" value={formData.commission} onChange={handleChange} required />
+          <NumberInput 
+            id="commission" 
+            name="commission" 
+            value={Number(formData.commission)} 
+            onChange={(value) => setFormData(prev => ({ ...prev, commission: value }))}
+            placeholder="0"
+            required
+            min={0}
+          />
         </div>
       </div>
       <div>

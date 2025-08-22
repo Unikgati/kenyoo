@@ -9,19 +9,29 @@ interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
 }
 
 const NumberInput: React.FC<NumberInputProps> = ({ value, onChange, className, ...props }) => {
+  // Format number with thousand separator (Indonesian format)
+  const formatNumber = (num: number): string => {
+    return num.toLocaleString('id-ID').replace(/,/g, '.');
+  };
+
+  // Parse formatted number back to number
+  const parseFormattedNumber = (formatted: string): number => {
+    return parseFloat(formatted.replace(/\./g, '')) || 0;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const numberValue = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+    // Remove any non-digit characters except decimal point
+    const cleanValue = e.target.value.replace(/[^\d.]/g, '');
+    const numberValue = parseFormattedNumber(cleanValue);
     onChange(numberValue);
   };
 
   return (
     <Input
       {...props}
-      type="number"
-      value={value}
+      type="text"
+      value={formatNumber(value)}
       onChange={handleChange}
-      min={0}
-      step={1}
       className={cn("text-right", className)}
     />
   );

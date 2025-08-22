@@ -109,10 +109,9 @@ const SaleConfirmationModal: React.FC<SaleConfirmationModalProps> = ({ isOpen, o
                             <NumberInput
                                 id="cashReceived"
                                 name="cashReceived"
-                                placeholder={`${Math.ceil(total)}`}
-                                value={cashReceived === '' ? 0 : Number(cashReceived)}
+                                placeholder={`Enter amount (e.g., ${Math.ceil(total)})`}
+                                value={cashReceived === '' ? 0 : cashReceived}
                                 onChange={(value) => setCashReceived(value)}
-                                min={0}
                             />
                             {cashReceived !== '' && cashReceived < total && (
                                 <p className="text-sm text-red-500 mt-1">Cash received is less than the total amount.</p>

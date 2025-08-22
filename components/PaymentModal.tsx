@@ -44,12 +44,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onConfirm,
                     <label htmlFor="paymentAmount" className="block text-sm font-medium text-foreground/80 mb-1">Payment Amount</label>
                     <NumberInput
                         id="paymentAmount"
-                        value={amount === '' ? 0 : Number(amount)}
+                        value={amount === '' ? 0 : amount}
                         onChange={setAmount}
                         placeholder="Enter amount to pay"
                         autoFocus
-                        min={0}
-                        max={remainingAmount}
                     />
                      {isInvalid && amount !== '' && (
                         <p className="text-sm text-red-500 mt-1">

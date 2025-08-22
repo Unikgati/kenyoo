@@ -91,11 +91,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave }) => {
           <NumberInput 
             id="price" 
             name="price" 
-            value={Number(formData.price)} 
+            value={formData.price} 
             onChange={(value) => setFormData(prev => ({ ...prev, price: value }))}
             placeholder="0"
-            required
-            min={0}
+            required 
           />
         </div>
         <div>
@@ -103,11 +102,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave }) => {
           <NumberInput 
             id="commission" 
             name="commission" 
-            value={Number(formData.commission)} 
+            value={formData.commission} 
             onChange={(value) => setFormData(prev => ({ ...prev, commission: value }))}
             placeholder="0"
-            required
-            min={0}
+            required 
           />
         </div>
       </div>

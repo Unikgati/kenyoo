@@ -32,7 +32,7 @@ const NumberInput: React.FC<NumberInputProps> = ({ value, onChange, className, .
       type="text"
       value={formatNumber(value)}
       onChange={handleChange}
-      className={cn("text-right", className)}
+      className={className}
     />
   );
 };
